@@ -1,0 +1,24 @@
+from abc import ABC, abstractmethod
+from pathlib import Path
+
+
+class BaseFile(ABC):
+
+    def __init__(self, filepath: str | Path):
+        self.filepath = Path(filepath)
+
+    @abstractmethod
+    def write_to_file(self, filepath):
+        pass
+
+    @abstractmethod
+    def add_aeroplane(self, filepath):
+        pass
+
+    @abstractmethod
+    def read_from_file(self, filepath):
+        pass
+
+    @abstractmethod
+    def delete_aeroplanes(self, filepath):
+        pass

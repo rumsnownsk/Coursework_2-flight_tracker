@@ -1,0 +1,82 @@
+import json
+
+from mypy.config_parser import convert_to_boolean
+
+from src.json_saver import JSONSaver
+
+
+class Aeroplane:
+
+    def __init__(
+            self,
+            id_flight: str = "",
+            callsign: str = "",  # позывной рейса
+            reg_country: str = "",  # Страна регистрации
+            on_ground: bool = True,  # находится ли самолёт на земле
+            velocity: float = 0.0,  # горизонтальная скорость
+            geo_altitude: float = 0.0 # геометрическая высота (м)
+    ):
+        Aeroplane.__validate(id_flight, reg_country, callsign, on_ground, velocity, geo_altitude)
+
+        self.id_flight = id_flight
+        self.callsign = callsign
+        self.reg_country = reg_country
+        self.on_ground = on_ground
+        self.velocity = velocity
+        self.geo_altitude = geo_altitude
+
+    @classmethod
+    def cast_to_object_list(cls, raw_data: list[dict]):
+        result = []
+        try:
+            states = raw_data["states"]
+        except KeyError:
+            raise KeyError("Отсутствуют данные по ключу <states>")
+
+        for item in states:
+            if not isinstance(item, list):
+                continue
+            id_flight = item[0]
+            callsign = item[1]
+            reg_country = item[2]
+            on_ground = item[8]
+            velocity = item[9]
+            geo_altitude = item[13] if isinstance(item[13], float) else 0.0
+            result.append(cls(id_flight, callsign, reg_country, on_ground, velocity, geo_altitude))
+
+        return result
+
+    @staticmethod
+    def __validate(id_flight, reg_country, callsign, on_ground, velocity, geo_altitude) -> None:
+        if not isinstance(id_flight, str):
+            raise TypeError(f"id_flight должно быть строкой, а приходит <{type(id_flight).__name__}>")
+
+        if not isinstance(reg_country, str):
+            raise TypeError(f"reg_country должен быть строкой, а получено <{type(reg_country).__name__}>")
+
+        if not isinstance(callsign, str):
+            raise TypeError(f"callsign должен быть строкой, а получено <{type(callsign).__name__}>")
+
+        if not isinstance(on_ground, bool):
+            raise TypeError(f"on_ground должен быть BOOL, а получено <{type(on_ground).__name__}>")
+
+        if not isinstance(velocity, (int, float)):
+            raise TypeError(f"velocity должен быть числом (int/float), а получено <{type(velocity).__name__}>")
+
+        if not isinstance(geo_altitude, (int, float)):
+            raise TypeError(f"geo_altitude должен быть числом (int/float), а получено <{geo_altitude} as {type(geo_altitude).__name__}>")
+
+    def __str__(self):
+        return f"рейс № {self.id_flight}"
+
+    def filter_aeroplanes_by_reg_country(self, aeroplanes, reg_country):
+
+        json_saver = JSONSaver()
+        res = json_saver.read_from_file("data.json")
+
+
+        for a in aeroplanes:
+            if a['reg_country'] == reg_country:
+                print(a)
+
+

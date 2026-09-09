@@ -10,24 +10,31 @@ readme = "README.md"
 python = "^3.12"
 requests = "^2.34.2"
 python-dotenv = "^1.2.2"
-isort = "^8.0.1"
 pandas = "^3.0.5"
 pandas-stubs = "~=3.0.5"
 openpyxl = "^3.1.5"
 
 
+# --- ГРУППА LINT (Инструменты проверки кода) ---
+[tool.poetry.group.lint]
+optional = true
+
 [tool.poetry.group.lint.dependencies]
-mypy = "^2.1.0"
+mypy = "^2.3.0"
 flake8 = "^7.3.0"
 black = "^26.5.1"
 isort = "^8.0.1"
 
 
+# --- ГРУППА DEV (Тестирование и разработка) ---
+[tool.poetry.group.dev]
+optional = true
+
 [tool.poetry.group.dev.dependencies]
 pytest = "^9.1.1"
 pytest-cov = "^7.1.0"
-mypy = "^2.3.0"
-flake8 = "^7.3.0"
+#mypy = "^2.3.0"
+#flake8 = "^7.3.0"
 
 [build-system]
 requires = ["poetry-core"]
