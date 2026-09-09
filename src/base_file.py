@@ -8,17 +8,17 @@ class BaseFile(ABC):
         self.filepath = Path(filepath)
 
     @abstractmethod
-    def write_to_file(self, filepath):
+    def write_to_file(self):
         pass
 
     @abstractmethod
-    def add_aeroplane(self, filepath):
+    def add_aeroplane(self):
         pass
 
     @abstractmethod
-    def read_from_file(self, filepath):
+    def read_from_file(self):
         pass
 
     @abstractmethod
-    def delete_aeroplanes(self, filepath):
+    def delete_aeroplanes(self):
         pass

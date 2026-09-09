@@ -2,10 +2,13 @@ import json
 
 from mypy.config_parser import convert_to_boolean
 
+from src.helpers import print_json
 from src.json_saver import JSONSaver
 
 
 class Aeroplane:
+
+    __aeroplanes_list = []
 
     def __init__(
             self,
@@ -69,14 +72,22 @@ class Aeroplane:
     def __str__(self):
         return f"рейс № {self.id_flight}"
 
-    def filter_aeroplanes_by_reg_country(self, aeroplanes, reg_country):
-
+    def get_aeroplanes_by_reg_country(self, reg_country:list):
         json_saver = JSONSaver()
-        res = json_saver.read_from_file("data.json")
+        res = json_saver.read_from_file()
+        states = res.get("states")
 
+        if not isinstance(states, list) or not reg_country:
+            return []
 
-        for a in aeroplanes:
-            if a['reg_country'] == reg_country:
-                print(a)
+        res = []
+        for el in states:
+            if el[2].lower() in list(map(str.lower, reg_country)):
+                res.append(el)
 
+        self.__aeroplanes_list = res
+        return res
+
+    def get_aeroplanes_by_altitude(self, altitude_range):
+        pass
 
