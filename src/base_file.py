@@ -8,7 +8,7 @@ class BaseFile(ABC):
         self.filepath = Path(filepath)
 
     @abstractmethod
-    def write_to_file(self):
+    def write_to_file(self, data):
         pass
 
     @abstractmethod

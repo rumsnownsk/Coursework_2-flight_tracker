@@ -1,4 +1,5 @@
 import json
+from typing import List, Any
 
 from mypy.config_parser import convert_to_boolean
 
@@ -8,7 +9,7 @@ from src.json_saver import JSONSaver
 
 class Aeroplane:
 
-    __aeroplanes_list = []
+    # __aeroplanes_list = []
 
     def __init__(
             self,
@@ -29,24 +30,22 @@ class Aeroplane:
         self.geo_altitude = geo_altitude
 
     @classmethod
-    def cast_to_object_list(cls, raw_data: list[dict]):
-        result = []
-        try:
-            states = raw_data["states"]
-        except KeyError:
-            raise KeyError("Отсутствуют данные по ключу <states>")
+    def cast_to_object_list(cls, states: list[list]) -> list["Aeroplane"]:
+        """ приведение к списку объектов """
+        result: List["Aeroplane"] = []
 
         for item in states:
-            if not isinstance(item, list):
+            if not isinstance(item, list) or len(item) < 16:
                 continue
-            id_flight = item[0]
-            callsign = item[1]
-            reg_country = item[2]
-            on_ground = item[8]
-            velocity = item[9]
-            geo_altitude = item[13] if isinstance(item[13], float) else 0.0
-            result.append(cls(id_flight, callsign, reg_country, on_ground, velocity, geo_altitude))
+            result.append(cls(
+                id_flight=item[0],
+                callsign = item[1],
+                reg_country = item[2],
+                on_ground = item[8],
+                velocity = item[9],
+                geo_altitude = item[13] if isinstance(item[13], (int, float)) else 0.0
 
+            ))
         return result
 
     @staticmethod
@@ -70,24 +69,26 @@ class Aeroplane:
             raise TypeError(f"geo_altitude должен быть числом (int/float), а получено <{geo_altitude} as {type(geo_altitude).__name__}>")
 
     def __str__(self):
-        return f"рейс № {self.id_flight}"
+        return f"Рейс # {self.id_flight} | Позывной: {self.callsign} | Страна: {self.reg_country}| Высота: {self.geo_altitude}"
 
-    def get_aeroplanes_by_reg_country(self, reg_country:list):
-        json_saver = JSONSaver()
-        res = json_saver.read_from_file()
-        states = res.get("states")
+    def __lt__(self, other:"Aeroplane") -> bool:
+        """
+        сравнение по высоте
+        self < other: self находится НИЖЕ, чем other
+        :param other:
+        :return: bool
+        """
+        if not isinstance(other, Aeroplane):
+            return NotImplemented
+        return self.geo_altitude < other.geo_altitude
 
-        if not isinstance(states, list) or not reg_country:
-            return []
-
-        res = []
-        for el in states:
-            if el[2].lower() in list(map(str.lower, reg_country)):
-                res.append(el)
-
-        self.__aeroplanes_list = res
-        return res
-
-    def get_aeroplanes_by_altitude(self, altitude_range):
-        pass
-
+    def __gt__(self, other) -> bool:
+        """
+        сравнение по высоте.
+        self > other: self находится ВЫШЕ, чем other
+        :param other:
+        :return: bool
+        """
+        if not isinstance(other, Aeroplane):
+            return NotImplemented
+        return self.geo_altitude > other.geo_altitude

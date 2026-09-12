@@ -33,14 +33,15 @@ class AeroplanesAPI(BaseApi):
             raise RuntimeError(f"Не удалось получить координаты для страны {country}: {e}")
 
         if not data:
-            raise ValueError(f"Страна '{country}' не найдена в Nominatim")
+            return []
+            # raise ValueError(f"Страна '{country}' не найдена в Nominatim")
 
         geo_data = data[0]
-        boundingbox = geo_data.get("boundingbox")
-        if not boundingbox or len(boundingbox) < 4:
+        bbox = geo_data.get("boundingbox")
+        if not bbox or len(bbox) < 4:
             raise ValueError(f"Для страны '{country}' не удалось получить boundingbox")
 
-        lamin, lamax, lomin, lomax = boundingbox[0], boundingbox[1], boundingbox[2], boundingbox[3]
+        lamin, lamax, lomin, lomax = bbox[0], bbox[1], bbox[2], bbox[3]
 
         params_opensky = {
             "lamin": lamin,

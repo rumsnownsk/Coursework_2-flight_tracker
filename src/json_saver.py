@@ -7,7 +7,7 @@ from src.helpers import PROJECT_ROOT
 
 class JSONSaver(BaseFile):
 
-    def __init__(self, data = None, filepath:str|Path= "data.json"):
+    def __init__(self, filepath:str|Path= "data.json"):
         super().__init__(filepath)
 
         self.base_dir = PROJECT_ROOT / "data"
@@ -15,7 +15,7 @@ class JSONSaver(BaseFile):
         self.base_dir.mkdir(parents=True, exist_ok=True)
 
         # Поле для хранения данных (чтобы write_to_file не требовал аргумент)
-        self.data: list | dict | None = data
+        self.data: list | dict | None = None
 
     @property
     def full_path(self) -> Path:
@@ -26,11 +26,11 @@ class JSONSaver(BaseFile):
             return fp
         return self.base_dir / fp.name
 
-    def write_to_file(self):
+    def write_to_file(self, data):
         path = self.full_path
 
         with path.open("w", encoding="utf-8") as f:
-            json.dump(self.data, f, ensure_ascii=False, indent=2)
+            json.dump(data, f, ensure_ascii=False, indent=2)
 
     def read_from_file(self):
         """
@@ -54,6 +54,6 @@ class JSONSaver(BaseFile):
 
 
 
-if __name__ == "__main__":
-    json_saver = JSONSaver()
-    json_saver.write_to_file()
+# if __name__ == "__main__":
+#     json_saver = JSONSaver()
+#     json_saver.write_to_file()
