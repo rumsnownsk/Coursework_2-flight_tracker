@@ -1,10 +1,9 @@
 # Создание экземпляра класса для работы с API сайтов с самолетами
-from src import aeroplane, json_saver
+# from src import aeroplane, json_saver
 from src.aeroplane import Aeroplane
 from src.aeroplanes_api import AeroplanesAPI
 from src.flight_manager import FlightManager
 from src.json_saver import JSONSaver
-
 
 # --------------------------------------------
 # Функционал для тестирования добавления и удаления данных в файл JSON
@@ -18,8 +17,6 @@ from src.json_saver import JSONSaver
 # saver.add_aeroplane(plane2)
 # print(saver.delete_aeroplane("test2"))
 # --------------------------------------------
-
-
 
 
 # --------------------------------------------
@@ -60,10 +57,10 @@ def user_interaction():
         raw_data = api.get_aeroplanes(country)
         if not raw_data:
             print(f"По стране <{country}> ничего не найдено. Попробуйте ещё раз.")
-            print("="*40 + "\n")
+            print("=" * 40 + "\n")
             continue
 
-        raw_data = {"country":country, **raw_data}
+        raw_data = {"country": country, **raw_data}
 
         saver = JSONSaver()
         saver.data = raw_data
@@ -81,23 +78,25 @@ def user_interaction():
             print(f"По стране <{country}> нет данных о самолётах.")
             continue
 
-
     print(f"""
     Получены данные по рейсам в воздушном пространстве страны: < {country.upper()} > \n
     Количество записей - {len(aeroplanes)}
     """)
-
 
     # 1. =================
     # создаём экземпляр класса для работы со списком самолётовых объектов
     flight_manager = FlightManager(aeroplanes)
 
     # 2. =================
-    reg_country = input("Введите названия стран (через пробел) для фильтрации по стране регистрации \n('Enter' - пропустить):\n>>> ").split()
+    reg_country = input(
+        "Введите названия стран (через пробел) для фильтрации по стране регистрации \n('Enter' - пропустить):\n>>> "
+    ).split()
     flight_manager.filter_by_reg_country(reg_country)
 
     # 3. =================
-    altitude_range = input("Введите диапазон высот полета \n(пример: 100000 - 150000. 'Enter' - пропустить):\n>>> ") # Пример: 100000 - 150000
+    altitude_range = input(
+        "Введите диапазон высот полета \n(пример: 100000 - 150000. 'Enter' - пропустить):\n>>> "
+    )  # Пример: 100000 - 150000
     flight_manager.filter_by_altitude(altitude_range)
 
     # 4. =================

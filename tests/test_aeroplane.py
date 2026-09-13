@@ -32,11 +32,15 @@ def test_create_valid_plane():
     assert plane.reg_country == "Russia"
     assert plane.on_ground is False
 
-@pytest.mark.parametrize("bad_id, expected_error", [
-    (123, "id_flight"),
-    (None, "id_flight"),
-    ([], "id_flight"),
-])
+
+@pytest.mark.parametrize(
+    "bad_id, expected_error",
+    [
+        (123, "id_flight"),
+        (None, "id_flight"),
+        ([], "id_flight"),
+    ],
+)
 def test_invalid_id_flight(bad_id, expected_error):
     with pytest.raises(TypeError, match=expected_error):
         Aeroplane(id_flight=bad_id)
@@ -58,15 +62,18 @@ def test_invalid_altitude(bad_altitude):
 # Тесты cast_to_object_list
 # ============================
 
+
 def test_cast_valid_states(sample_states):
     planes = Aeroplane.cast_to_object_list(sample_states)
     assert len(planes) == 2
     assert planes[0].id_flight == "id1"
     assert planes[1].geo_altitude == 5000
 
+
 # ============================
 # Тесты сравнения по высоте
 # ============================
+
 
 def test_greater_than(plane_high, plane_low):
     assert plane_high > plane_low
@@ -91,6 +98,7 @@ def test_comparison_with_non_aeroplane_raises(plane_high):
 # Тесты сравнения по скорости
 # ============================
 
+
 def test_is_faster_than_true(plane_high, plane_low):
     assert plane_high.is_faster_than(plane_low) is True
 
@@ -102,6 +110,7 @@ def test_is_faster_than_false(plane_low, plane_high):
 # ============================
 # Тест __str__
 # ============================
+
 
 def test_str_contains_fields(plane_high):
     s = str(plane_high)
@@ -117,6 +126,3 @@ def test_str_on_ground_yes():
 
 def test_str_on_ground_no(plane_high):
     assert "нет" in str(plane_high)
-
-
-

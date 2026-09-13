@@ -1,25 +1,27 @@
-from typing import List, Any
+from typing import List
+
 
 class Aeroplane:
     """
-        Модель самолёта для работы с данными OpenSky API.
+    Модель самолёта для работы с данными OpenSky API.
 
-        Атрибуты:
-            id_flight (str): уникальный идентификатор рейса (ICAO24).
-            callsign (str): позывной рейса (например, "THA110").
-            reg_country (str): страна регистрации.
-            on_ground (bool): находится ли самолёт на земле.
-            velocity (float): горизонтальная скорость (м/с).
-            geo_altitude (float): геометрическая высота (м).
+    Атрибуты:
+        id_flight (str): уникальный идентификатор рейса (ICAO24).
+        callsign (str): позывной рейса (например, "THA110").
+        reg_country (str): страна регистрации.
+        on_ground (bool): находится ли самолёт на земле.
+        velocity (float): горизонтальная скорость (м/с).
+        geo_altitude (float): геометрическая высота (м).
     """
+
     def __init__(
-            self,
-            id_flight: str = "",
-            callsign: str = "",  # позывной рейса
-            reg_country: str = "",  # Страна регистрации
-            on_ground: bool = True,  # находится ли самолёт на земле
-            velocity: float = 0.0,  # горизонтальная скорость
-            geo_altitude: float = 0.0 # геометрическая высота (м)
+        self,
+        id_flight: str = "",
+        callsign: str = "",  # позывной рейса
+        reg_country: str = "",  # Страна регистрации
+        on_ground: bool = True,  # находится ли самолёт на земле
+        velocity: float = 0.0,  # горизонтальная скорость
+        geo_altitude: float = 0.0,  # геометрическая высота (м)
     ):
         if velocity is None:
             velocity = 0
@@ -47,15 +49,16 @@ class Aeroplane:
         for item in states:
             if not isinstance(item, list) or len(item) < 16:
                 continue
-            result.append(cls(
-                id_flight=item[0],
-                callsign = item[1],
-                reg_country = item[2],
-                on_ground = item[8],
-                velocity = item[9],
-                geo_altitude = item[13] if isinstance(item[13], (int, float)) else 0.0
-
-            ))
+            result.append(
+                cls(
+                    id_flight=item[0],
+                    callsign=item[1],
+                    reg_country=item[2],
+                    on_ground=item[8],
+                    velocity=item[9],
+                    geo_altitude=item[13] if isinstance(item[13], (int, float)) else 0.0,
+                )
+            )
         return result
 
     @staticmethod
@@ -78,17 +81,20 @@ class Aeroplane:
 
         if isinstance(geo_altitude, bool) or not isinstance(geo_altitude, (int, float)):
             raise TypeError(
-                f"geo_altitude должен быть числом (int/float), а получено <{geo_altitude} as {type(geo_altitude).__name__}>")
+                f"geo_altitude должен быть числом (int/float), "
+                f"а получено <{geo_altitude} as {type(geo_altitude).__name__}>"
+            )
 
     def __str__(self):
         """Возвращает строковое представление самолёта для вывода в консоль."""
-        return (f"# {self.id_flight} | "
-                f"Позывной: {self.callsign or ' '*8} | "
-                f"Высота: {str(self.geo_altitude or 0).ljust(10)} | " 
-                f"На земле: {(' да' if self.on_ground else 'нет').ljust(4)} | " 
-                f"Скорость: {str(self.velocity or 0).ljust(10)} | "
-                f"Страна(рег.): {(self.reg_country or "").ljust(12)}"
-                )
+        return (
+            f"# {self.id_flight} | "
+            f"Позывной: {self.callsign or ' ' * 8} | "
+            f"Высота: {str(self.geo_altitude or 0).ljust(10)} | "
+            f"На земле: {(' да' if self.on_ground else 'нет').ljust(4)} | "
+            f"Скорость: {str(self.velocity or 0).ljust(10)} | "
+            f"Страна(рег.): {(self.reg_country or "").ljust(12)}"
+        )
 
     def __lt__(self, other: "Aeroplane") -> bool:
         """self < other: self находится НИЖЕ, чем other."""

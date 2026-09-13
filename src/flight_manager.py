@@ -1,19 +1,19 @@
-from typing import Any, List
+import re
+from typing import List
 
 from src.aeroplane import Aeroplane
 from src.json_saver import JSONSaver
-import re
+
 
 class FlightManager:
 
-    filtered_aeroplanes = []
+    # filtered_aeroplanes = []
 
-    def __init__(self, aeroplanes:list[Aeroplane]):
+    def __init__(self, aeroplanes: list[Aeroplane]):
         # Храним только объекты Aeroplane, никаких сырых списков
         self.aeroplanes: List[Aeroplane] = aeroplanes or []
         # Здесь будем хранить результат фильтрации
         self.filtered_aeroplanes: List[Aeroplane] = self.aeroplanes
-
 
     def load_from_file(self):
         """
@@ -35,7 +35,7 @@ class FlightManager:
         self.filtered_aeroplanes = self.aeroplanes[:]
 
     def get_top_aeroplanes(self, top_n):
-        if not top_n :
+        if not top_n:
             return
 
         try:
@@ -49,7 +49,7 @@ class FlightManager:
 
         self.filtered_aeroplanes = self.filtered_aeroplanes[:n]
 
-    def filter_by_reg_country(self, reg_countries:list):
+    def filter_by_reg_country(self, reg_countries: list):
         """фильтрация самолётов по стране-регистрации"""
         if not reg_countries:
             return
@@ -61,8 +61,6 @@ class FlightManager:
         self.filtered_aeroplanes = res
         return
 
-
-
     def filter_by_altitude(self, altitude_range: str):
         if not altitude_range:
             return
@@ -71,18 +69,15 @@ class FlightManager:
         if match:
             min_val = int(match.group(1))
             max_val = int(match.group(2))
-            if max_val<min_val:
+            if max_val < min_val:
                 return
 
-            self.filtered_aeroplanes = [
-                a for a in self.filtered_aeroplanes
-                if min_val < a.geo_altitude < max_val
-            ]
+            self.filtered_aeroplanes = [a for a in self.filtered_aeroplanes if min_val < a.geo_altitude < max_val]
             return
         return
 
     def sort_aeroplanes_by_altitude(self, confirm):
-        if confirm.lower() == 'y':
+        if confirm.lower() == "y":
             self.filtered_aeroplanes = sorted(self.filtered_aeroplanes, key=lambda p: p.geo_altitude, reverse=True)
             return
         return

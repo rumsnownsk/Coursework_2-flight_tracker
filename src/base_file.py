@@ -1,6 +1,8 @@
 from abc import ABC, abstractmethod
 from pathlib import Path
 
+from src.aeroplane import Aeroplane
+
 
 class BaseFile(ABC):
 
@@ -12,7 +14,8 @@ class BaseFile(ABC):
         pass
 
     @abstractmethod
-    def add_aeroplane(self):
+    def add_aeroplane(self, *args, **kwargs) -> None:
+        """Добавить самолёт в хранилище."""
         pass
 
     @abstractmethod
@@ -20,5 +23,6 @@ class BaseFile(ABC):
         pass
 
     @abstractmethod
-    def delete_aeroplane(self):
+    def delete_aeroplane(self, id_flight:str) -> str:
+        """Удалить самолёт по id_flight."""
         pass

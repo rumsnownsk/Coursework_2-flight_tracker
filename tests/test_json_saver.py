@@ -1,7 +1,8 @@
 import json
-import pytest
-from unittest.mock import patch
 from pathlib import Path
+from unittest.mock import patch
+
+import pytest
 
 from src.aeroplane import Aeroplane
 from src.json_saver import JSONSaver
@@ -27,6 +28,7 @@ def _add_planes(saver):
 # --------------------------------------------
 # Добавление
 # --------------------------------------------
+
 
 def test_add_aeroplane_creates_file_and_adds_one(saver):
     plane = Aeroplane(
@@ -78,6 +80,7 @@ def test_add_aeroplane_handles_empty_file_structure(saver, tmp_path):
 # Удаление по id_flight
 # --------------------------------------------
 
+
 def test_delete_removes_all_matching(saver):
     _add_planes(saver)
     result = saver.delete_aeroplane("id1")
@@ -118,6 +121,7 @@ def test_delete_not_found(saver):
 # Проверка на None
 # --------------------------------------------
 
+
 def test_delete_none_id_returns_message(saver):
     _add_planes(saver)
     result = saver.delete_aeroplane(None)
@@ -130,6 +134,7 @@ def test_delete_none_id_returns_message(saver):
 # --------------------------------------------
 # Нет файла / битый файл
 # --------------------------------------------
+
 
 def test_delete_no_file(saver):
     # Файл ещё не создан — read_from_file вернёт None

@@ -1,7 +1,9 @@
+from unittest.mock import MagicMock, patch
+
 import pytest
-from unittest.mock import patch, MagicMock
-from src.aeroplanes_api import AeroplanesAPI
 import requests
+
+from src.aeroplanes_api import AeroplanesAPI
 
 
 @pytest.fixture
@@ -16,10 +18,7 @@ def api():
 def test_get_aeroplanes_success(mock_get, api):
     mock_nominatim_resp = MagicMock()
     mock_nominatim_resp.json.return_value = [
-        {
-            "boundingbox": ["10.0", "20.0", "30.0", "40.0"],
-            "display_name": "Testland"
-        }
+        {"boundingbox": ["10.0", "20.0", "30.0", "40.0"], "display_name": "Testland"}
     ]
     mock_nominatim_resp.raise_for_status.return_value = None
 
@@ -27,7 +26,7 @@ def test_get_aeroplanes_success(mock_get, api):
     mock_opensky_resp.json.return_value = {
         "states": [
             ["id1", "CS1", "RU", 0, 0, 0, 0, 0, False, 100, 0, 0, None, 5000, "1000", False, 0],
-            ["id2", "CS2", "RU", 0, 0, 0, 0, 0, True, 0, 0, 0, None, 2000, "7670", False, 0]
+            ["id2", "CS2", "RU", 0, 0, 0, 0, 0, True, 0, 0, 0, None, 2000, "7670", False, 0],
         ]
     }
     mock_opensky_resp.raise_for_status.return_value = None
@@ -60,9 +59,7 @@ def test_get_aeroplanes_country_not_found(mock_get, api):
 @patch("requests.get")
 def test_get_aeroplanes_no_boundingbox(mock_get, api):
     mock_resp = MagicMock()
-    mock_resp.json.return_value = [
-        {"display_name": "WeirdCountry"}  # нет boundingbox
-    ]
+    mock_resp.json.return_value = [{"display_name": "WeirdCountry"}]  # нет boundingbox
     mock_resp.raise_for_status.return_value = None
     mock_get.return_value = mock_resp
 
@@ -88,9 +85,7 @@ def test_get_aeroplanes_nominatim_network_error(mock_get, api):
 def test_get_aeroplanes_opensky_network_error(mock_get, api):
     # Первый запрос (Nominatim) — ок
     mock_nominatim = MagicMock()
-    mock_nominatim.json.return_value = [
-        {"boundingbox": ["0", "1", "0", "1"], "display_name": "SmallLand"}
-    ]
+    mock_nominatim.json.return_value = [{"boundingbox": ["0", "1", "0", "1"], "display_name": "SmallLand"}]
     mock_nominatim.raise_for_status.return_value = None
 
     # Второй запрос (OpenSky) — ошибка
@@ -108,9 +103,7 @@ def test_get_aeroplanes_opensky_network_error(mock_get, api):
 @patch("requests.get")
 def test_get_aeroplanes_bad_opensky_structure(mock_get, api):
     mock_nominatim = MagicMock()
-    mock_nominatim.json.return_value = [
-        {"boundingbox": ["0", "1", "0", "1"], "display_name": "BadStructLand"}
-    ]
+    mock_nominatim.json.return_value = [{"boundingbox": ["0", "1", "0", "1"], "display_name": "BadStructLand"}]
     mock_nominatim.raise_for_status.return_value = None
 
     mock_opensky = MagicMock()

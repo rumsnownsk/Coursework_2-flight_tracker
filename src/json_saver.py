@@ -1,6 +1,7 @@
 import json
 from datetime import datetime
 from pathlib import Path
+from typing import Optional, Dict, Any
 
 from src.aeroplane import Aeroplane
 from src.base_file import BaseFile
@@ -41,7 +42,7 @@ class JSONSaver(BaseFile):
         with path.open("w", encoding="utf-8") as f:
             json.dump(data, f, ensure_ascii=False, indent=2)
 
-    def read_from_file(self) -> dict | None:
+    def read_from_file(self) -> Optional[Dict[str, Any]]:
         """Читает JSON-файл и возвращает содержимое как dict.
 
         - Если файла нет — возвращает None.
@@ -61,10 +62,7 @@ class JSONSaver(BaseFile):
         except (json.JSONDecodeError, ValueError):
             # Файл есть, но невалидный JSON (пустой или битый)
             # Возвращаем «чистую» структуру, чтобы add_aeroplane мог работать
-            return {
-                "time": int(datetime.now().timestamp()),
-                "country": "---",
-                "states": []}
+            return {"time": int(datetime.now().timestamp()), "country": "---", "states": []}
 
     def add_aeroplane(self, aeroplane: "Aeroplane") -> None:
         """Добавляет одну запись о самолёте в JSON-файл.
@@ -81,38 +79,35 @@ class JSONSaver(BaseFile):
 
         # Если файла нет / пусто / не словарь — создаём правильную структуру
         if raw is None or not isinstance(raw, dict):
-            raw = {
-                "time": int(datetime.now().timestamp()),
-                "country": "---",
-                "states": []
-            }
+            raw = {"time": int(datetime.now().timestamp()), "country": "---", "states": []}
 
         # Если ключа "states" нет — добавляем
         if "states" not in raw:
             raw["states"] = []
 
-        raw["states"].append([
-            aeroplane.id_flight,        # 0
-            aeroplane.callsign,         # 1
-            aeroplane.reg_country,      # 2
-            None,                       # 3 — time_position
-            None,                       # 4 — last_contact
-            None,                       # 5 — longitude
-            None,                       # 6 — latitude
-            None,                       # 7 — baro_altitude
-            aeroplane.on_ground,        # 8
-            aeroplane.velocity,         # 9
-            None,                       # 10 — heading
-            None,                       # 11 — vertical_rate
-            None,                       # 12 — sensors
-            aeroplane.geo_altitude,     # 13
-            None,                       # 14 — squawk
-            False,                      # 15 — spi
-            0,                          # 16 — position_source
-        ])
+        raw["states"].append(
+            [
+                aeroplane.id_flight,  # 0
+                aeroplane.callsign,  # 1
+                aeroplane.reg_country,  # 2
+                None,  # 3 — time_position
+                None,  # 4 — last_contact
+                None,  # 5 — longitude
+                None,  # 6 — latitude
+                None,  # 7 — baro_altitude
+                aeroplane.on_ground,  # 8
+                aeroplane.velocity,  # 9
+                None,  # 10 — heading
+                None,  # 11 — vertical_rate
+                None,  # 12 — sensors
+                aeroplane.geo_altitude,  # 13
+                None,  # 14 — squawk
+                False,  # 15 — spi
+                0,  # 16 — position_source
+            ]
+        )
         raw["time"] = int(datetime.now().timestamp())
         self.write_to_file(raw)
-
 
     def delete_aeroplane(self, id_flight: str | None = None) -> str:
         """Удаляет все записи с указанным id_flight из JSON-файла.

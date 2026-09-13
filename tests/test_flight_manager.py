@@ -1,7 +1,9 @@
+from unittest.mock import MagicMock, patch
+
 import pytest
-from unittest.mock import patch, MagicMock
-from src.flight_manager import FlightManager
+
 from src.aeroplane import Aeroplane
+from src.flight_manager import FlightManager
 
 
 @pytest.fixture
@@ -39,7 +41,7 @@ def test_load_from_file_success(mock_json_saver, manager):
     mock_saver.read_from_file.return_value = {
         "states": [
             ["id4", "CS4", "Spain", 0, 0, 0, 0, 0, False, 600, 0, 0, None, 3000, "1000", False, 0],
-            ["id5", "CS5", "Italy", 0, 0, 0, 0, 0, True, 0, 0, 0, None, 1500, "7670", False, 0]
+            ["id5", "CS5", "Italy", 0, 0, 0, 0, 0, True, 0, 0, 0, None, 1500, "7670", False, 0],
         ]
     }
     mock_json_saver.return_value = mock_saver
