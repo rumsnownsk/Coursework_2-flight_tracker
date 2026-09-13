@@ -1,7 +1,7 @@
 import json
 from datetime import datetime
 from pathlib import Path
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, cast
 
 from src.aeroplane import Aeroplane
 from src.base_file import BaseFile
@@ -58,7 +58,8 @@ class JSONSaver(BaseFile):
         try:
             # Используем path.open, чтобы это было удобно мокать через patch("pathlib.Path.open")
             with path.open("r", encoding="utf-8") as f:
-                return json.load(f)
+                data = json.load(f)
+                return cast(Dict[str, Any], data)
         except (json.JSONDecodeError, ValueError):
             # Файл есть, но невалидный JSON (пустой или битый)
             # Возвращаем «чистую» структуру, чтобы add_aeroplane мог работать
