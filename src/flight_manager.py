@@ -81,9 +81,11 @@ class FlightManager:
             return
         return
 
-    def sort_aeroplanes_by_altitude(self):
-        self.filtered_aeroplanes = sorted(self.filtered_aeroplanes, key=lambda p: p.geo_altitude)
-
+    def sort_aeroplanes_by_altitude(self, confirm):
+        if confirm.lower() == 'y':
+            self.filtered_aeroplanes = sorted(self.filtered_aeroplanes, key=lambda p: p.geo_altitude, reverse=True)
+            return
+        return
 
     def __str__(self):
         return f"отфильтрованный итоговый список: {self.filtered_aeroplanes}"

@@ -20,5 +20,5 @@ class BaseFile(ABC):
         pass
 
     @abstractmethod
-    def delete_aeroplanes(self):
+    def delete_aeroplane(self):
         pass

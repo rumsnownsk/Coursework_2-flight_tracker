@@ -4,35 +4,34 @@ from src.aeroplane import Aeroplane
 from src.aeroplanes_api import AeroplanesAPI
 from src.flight_manager import FlightManager
 from src.json_saver import JSONSaver
-from src.helpers import print_json
 
-# api = AeroplanesAPI()
-#
-# # Получение информации о самолетах с opensky-network.org
-# raw_aeroplanes = api.get_aeroplanes("Spain")
-#
-# # Преобразование набора данных в список объектов
-# aeroplanes = Aeroplane.cast_to_object_list(raw_aeroplanes)
-# #
-# for item in aeroplanes:
-#     print(item)
 
-# # Пример работы контструктора класса с одним самолетом
-# aeroplane = Aeroplane("UAL1621", "United States", 268.79, 10203.18)
-#
-# Сохранение информации в файл
-# json_saver = JSONSaver()
-# json_saver.add_aeroplane(vacancy)
-# json_saver.delete_aeroplane(vacancy)
+# --------------------------------------------
+# Функционал для тестирования добавления и удаления данных в файл JSON
+# --------------------------------------------
 
-# # Функция для взаимодействия с пользователем
+# plane1 = Aeroplane("test1", "test", "test", True, 0.0, 0.0)
+# plane2 = Aeroplane("test2", "test", "test", True, 0.0, 0.0)
+
+# saver = JSONSaver()
+# saver.add_aeroplane(plane1)
+# saver.add_aeroplane(plane2)
+# print(saver.delete_aeroplane("test2"))
+# --------------------------------------------
+
+
+
+
+# --------------------------------------------
+# Функция для взаимодействия с пользователем
+# --------------------------------------------
 def user_interaction():
     # 1. =================
     aeroplanes = []
     country = ""
 
     while not aeroplanes:
-        country = input("Введите название страны (на англ.):\n>>> ")
+        country = input("\nВведите название страны (на англ.) для обновления данных:\n>>> ")
 
         if not country:
             print("Страна не введена. Попробуем взять данные из сохранённого файла.\n")
@@ -48,7 +47,7 @@ def user_interaction():
                 aeroplanes = Aeroplane.cast_to_object_list(states)
                 if aeroplanes:
                     country = raw.get("country")
-                    print(f"Данные загружены из файла. Всего записей: {len(aeroplanes)}")
+                    # print(f"Данные загружены из файла. Всего записей: {len(aeroplanes)}")
                     break
                 else:
                     print("В файле нет данных. Введите название страны.")
@@ -84,45 +83,36 @@ def user_interaction():
 
 
     print(f"""
-    Получены данные по рейсам в воздушном пространстве страны: < {country.upper()} >
+    Получены данные по рейсам в воздушном пространстве страны: < {country.upper()} > \n
     Количество записей - {len(aeroplanes)}
     """)
 
 
+    # 1. =================
     # создаём экземпляр класса для работы со списком самолётовых объектов
     flight_manager = FlightManager(aeroplanes)
+
     # 2. =================
-    top_n = input("Введите количество самолетов для вывода в топ N:\n>>> ")
-
-
-    # 3. =================
-    reg_country = input("Введите названия стран (через пробел) для фильтрации по стране регистрации:\n>>> ").split()
+    reg_country = input("Введите названия стран (через пробел) для фильтрации по стране регистрации \n('Enter' - пропустить):\n>>> ").split()
     flight_manager.filter_by_reg_country(reg_country)
 
-    # 4. =================
-    altitude_range = input("Введите диапазон высот полета (пример: 100000 - 150000):\n>>> ") # Пример: 100000 - 150000
+    # 3. =================
+    altitude_range = input("Введите диапазон высот полета \n(пример: 100000 - 150000. 'Enter' - пропустить):\n>>> ") # Пример: 100000 - 150000
     flight_manager.filter_by_altitude(altitude_range)
 
-    flight_manager.sort_aeroplanes_by_altitude()
+    # 4. =================
+    sort_altitude = input("Сортировать самолёты по высоте?\n('y' - да. 'Enter' - пропустить):\n>>>")
+    flight_manager.sort_aeroplanes_by_altitude(sort_altitude)
 
+    # 5. =================
+    top_n = input("Введите количество самолетов для вывода в топ N \n('Enter' - пропустить):\n>>> ")
     flight_manager.get_top_aeroplanes(top_n)
 
-    for el in flight_manager.filtered_aeroplanes:
-        print(el)
-
-
-    # !!!!!!! Метод готов и работает
-    # filtered_aeroplanes = aeroplane_obj.get_aeroplanes_by_reg_country(reg_country)
-    # print(f"""
-    # Рейсы по странам-регистраторам: < {print(filtered_aeroplanes)} >
-    # """)
-
-    # ranged_aeroplanes = aeroplane.get_aeroplanes_by_altitude(altitude_range)
-    #
-    # sorted_aeroplanes = sort_aeroplanes(ranged_aeroplanes)
-    # top_aeroplanes = get_top_aeroplanes(sorted_aeroplanes, top_n)
-    # print_aeroplanes(top_aeroplanes)
+    # принтуем итоговый набор рейсов
+    for flight in flight_manager.filtered_aeroplanes:
+        print(flight)
 
 
 if __name__ == "__main__":
-    user_interaction()
+    while True:
+        user_interaction()
