@@ -14,12 +14,12 @@ class AeroplanesAPI(BaseApi):
     def get_aeroplanes(self, country: str) -> List[Dict[str, Any]]:
         # Headers с user-agent - обязательный параметр при запросе к nominatim.openstreetmap.
         # Вы можете использовать любое название вместо test-app/1.0, например просто test-app.
-        headers_nominatim = {
+        headers_nominatim: Dict[str, str] = {
             "User-Agent": "test-app/1.0",
         }
 
         # Указываем параметры: в каком формате возвращать данные и максимальную длину списка стран в ответе.
-        params_nominatim = {
+        params_nominatim: Dict[str, Any] = {
             "country": country,
             "format": "json",
             "limit": 1,
@@ -38,17 +38,19 @@ class AeroplanesAPI(BaseApi):
             # raise ValueError(f"Страна '{country}' не найдена в Nominatim")
 
         geo_data = data[0]
-        bbox = geo_data.get("boundingbox")
-        if not bbox or len(bbox) < 4:
+
+        bbox_raw = geo_data.get("boundingbox")
+        if not isinstance(bbox_raw, list) or len(bbox_raw) < 4:
             raise ValueError(f"Для страны '{country}' не удалось получить boundingbox")
 
-        lamin, lamax, lomin, lomax = bbox[0], bbox[1], bbox[2], bbox[3]
+        bbox: List[float] = [float(x) for x in bbox_raw[:4]]
+        lamin, lamax, lomin, lomax = bbox
 
-        params_opensky = {
-            "lamin": lamin,
-            "lamax": lamax,
-            "lomin": lomin,
-            "lomax": lomax,
+        params_opensky: Dict[str, float] = {
+            "lamin": float(lamin),
+            "lamax": float(lamax),
+            "lomin": float(lomin),
+            "lomax": float(lomax),
         }
 
         try:
